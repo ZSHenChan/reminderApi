@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using personal_ai.Contracts.Enums;
-using personal_ai.Contracts.Interfaces;
+using Shared.Contracts.Enums;
+using Shared.Contracts.Interfaces;
 
-namespace personal_ai.Models;
+namespace Shared.Models;
 
 public class Reminder : IReminder
 {

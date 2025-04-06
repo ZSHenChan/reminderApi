@@ -1,13 +1,14 @@
-using personal_ai.Dtos.Reminder;
-using personal_ai.Models;
+using Shared.Dtos.Reminder;
+using Shared.Models;
+using Shared.Utils;
 
-namespace personal_ai.Contracts.Interfaces
+namespace Shared.Contracts.Interfaces
 {
   public interface IReminderRepository
   {
     Task<Reminder> AddAsync(Reminder reminder);
     Task<Reminder?> DeleteAsync(int id);
-    Task<List<Reminder>> GetAllAsync();
+    Task<List<Reminder>> GetAllAsync(QueryObject queryObject);
     Task<Reminder?> GetByIdAsync(int id);
     Task<Reminder?> UpdateAsync(int id, CreateReminderRequestDto reminder);
   }

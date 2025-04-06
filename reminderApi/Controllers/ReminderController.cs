@@ -1,12 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using personal_ai.Contracts.Interfaces;
-using personal_ai.Data;
-using personal_ai.Dtos.Reminder;
-using personal_ai.Mappers;
-using personal_ai.Models;
-using personal_ai.Utils;
+using reminderApi.Data;
+using reminderApi.Mappers;
+using Shared.Contracts.Interfaces;
+using Shared.Dtos.Reminder;
+using Shared.Models;
+using Shared.Utils;
 
 namespace personal_ai.Controllers;
 
@@ -54,12 +52,12 @@ public class ReminderController : ControllerBase
   /// </summary>
   /// <returns></returns>
   [HttpGet("all", Name = "GetAllReminders")]
-  public async Task<IActionResult> GetAll()
+  public async Task<IActionResult> GetAll([FromQuery] QueryObject queryObject)
   {
     if (!ModelState.IsValid)
       return BadRequest(ModelState);
 
-    List<Reminder> reminders = await _reminderRepository.GetAllAsync();
+    List<Reminder> reminders = await _reminderRepository.GetAllAsync(queryObject);
     var reminderDtoList = reminders.Select(r => ReminderMapper.ToReminderDto(r));
     return Ok(reminderDtoList);
   }

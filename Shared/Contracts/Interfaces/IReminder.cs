@@ -1,7 +1,6 @@
-using System;
-using personal_ai.Contracts.Enums;
+using Shared.Contracts.Enums;
 
-namespace personal_ai.Contracts.Interfaces
+namespace Shared.Contracts.Interfaces
 {
   public interface IReminder
   {

@@ -23,7 +23,7 @@
 // * Correct Code here
 using System.ComponentModel.DataAnnotations;
 
-namespace personal_ai.Dtos.Validators
+namespace Shared.Dtos.Validators
 {
   public static class EnumValidator
   {

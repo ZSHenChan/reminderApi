@@ -1,14 +1,18 @@
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using personal_ai.Contracts.Interfaces;
-using personal_ai.Data;
-using personal_ai.Middleware;
-using personal_ai.Repository;
+using reminderApi.Data;
+using reminderApi.Middleware;
+using reminderApi.Repository;
 using Serilog;
 using Serilog.Events;
+using Shared.Contracts.Interfaces;
+using Shared.Models;
 
 Log.Logger = new LoggerConfiguration()
   .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
@@ -69,8 +73,57 @@ try
   builder.Services.AddDbContext<AppDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SQLServer"))
   );
+
+  builder
+    .Services.AddIdentity<AppUser, IdentityRole>(options =>
+    {
+      options.User.RequireUniqueEmail = true;
+      options.Password.RequiredLength = 10;
+      options.Password.RequireDigit = true;
+      options.Password.RequireLowercase = false;
+      options.Password.RequireUppercase = true;
+      options.Password.RequireNonAlphanumeric = false;
+    })
+    .AddEntityFrameworkStores<AppDBContext>();
+
+  builder
+    .Services.AddAuthentication(options =>
+    {
+      options.DefaultAuthenticateScheme =
+        options.DefaultChallengeScheme =
+        options.DefaultForbidScheme =
+        options.DefaultSignInScheme =
+        options.DefaultSignOutScheme =
+          JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+      options.TokenValidationParameters = new TokenValidationParameters
+      {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(
+          System.Text.Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SigninKey"])
+        ),
+      };
+    });
+
   builder.Services.AddScoped<IReminderRepository, ReminderRepository>();
 
+  builder.Logging.ClearProviders();
+  builder.Host.UseSerilog(
+    (context, services, configuration) =>
+    {
+      configuration
+        .ReadFrom.Configuration(context.Configuration)
+        .ReadFrom.Services(services)
+        .Enrich.FromLogContext();
+    }
+  );
   builder.Services.AddSerilog(
     (services, lc) =>
       lc
@@ -95,6 +148,7 @@ try
 
   app.UseHttpsRedirection();
 
+  app.UseAuthentication();
   app.UseAuthorization();
 
   app.MapControllers();

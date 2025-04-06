@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using personal_ai.Contracts.Enums;
+using Shared.Contracts.Enums;
 
-namespace personal_ai.Dtos.Reminder
+namespace Shared.Dtos.Reminder
 {
   public class ReminderDto
   {

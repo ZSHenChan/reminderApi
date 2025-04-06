@@ -1,12 +1,11 @@
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using personal_ai.Contracts.Interfaces;
-using personal_ai.Data;
-using personal_ai.Dtos.Reminder;
-using personal_ai.Models;
-using personal_ai.Utils;
+using reminderApi.Data;
+using Shared.Contracts.Interfaces;
+using Shared.Dtos.Reminder;
+using Shared.Models;
+using Shared.Utils;
 
-namespace personal_ai.Repository
+namespace reminderApi.Repository
 {
   public class ReminderRepository : IReminderRepository
   {
@@ -17,11 +16,42 @@ namespace personal_ai.Repository
       _context = context;
     }
 
-    public async Task<List<Reminder>> GetAllAsync()
+    public async Task<List<Reminder>> GetAllAsync(QueryObject queryObject)
     {
       try
       {
-        return await _context.Reminders.ToListAsync();
+        var reminders = _context.Reminders.AsQueryable();
+        if (!string.IsNullOrWhiteSpace(queryObject.Title))
+        {
+          reminders = reminders.Where(r => r.Title.Contains(queryObject.Title));
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryObject.Description))
+        {
+          reminders = reminders.Where(r => r.Description.Contains(queryObject.Description));
+        }
+
+        if (queryObject.IsRecurring.HasValue)
+        {
+          reminders = reminders.Where(r => r.IsRecurring == queryObject.IsRecurring);
+        }
+
+        if (queryObject.RemiderType.HasValue)
+        {
+          reminders = reminders.Where(r => r.ReminderType == queryObject.RemiderType);
+        }
+
+        if (queryObject.ReminderStatus.HasValue)
+        {
+          reminders = reminders.Where(r => r.Status == queryObject.ReminderStatus);
+        }
+
+        reminders = reminders.OrderBy(r => r.DueDate).ThenBy(r => r.DueTime);
+
+        int skipNumber = (queryObject.PageNumber - 1) * queryObject.PageSize;
+        reminders = reminders.Skip(skipNumber).Take(queryObject.PageSize);
+
+        return await reminders.ToListAsync();
       }
       catch (Exception)
       {

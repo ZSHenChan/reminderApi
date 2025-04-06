@@ -1,8 +1,8 @@
-namespace personal_ai.Contracts.Enums
+namespace Shared.Contracts.Enums
 {
-    public enum ReminderType
-    {
-        Work,
-        Personal,
-    }
+  public enum ReminderType
+  {
+    Work,
+    Personal,
+  }
 }

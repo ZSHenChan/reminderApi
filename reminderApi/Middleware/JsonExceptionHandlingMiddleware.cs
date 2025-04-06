@@ -1,11 +1,8 @@
-using System;
 using System.Net;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 
-namespace personal_ai.Middleware
+namespace reminderApi.Middleware
 {
   public class JsonExceptionHandlingMiddleware
   {

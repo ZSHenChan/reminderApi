@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
-namespace personal_ai.Middleware
+namespace reminderApi.Middleware
 {
   public class ExceptionHandlingMiddleware
   {
@@ -54,7 +54,7 @@ namespace personal_ai.Middleware
       catch (Exception ex)
       {
         _systemLogger.LogError(
-          "An unexpected error occurred. Type: {Type}, Message: {Message}",
+          "An unexpected error occurred. Type: {Type}, Message: {Exception}\n",
           ex.GetType().Name,
           ex.Message
         );

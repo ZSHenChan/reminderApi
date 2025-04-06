@@ -1,21 +1,21 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
-using personal_ai.Contracts.Enums;
-using personal_ai.Dtos.Validators;
+using Shared.Contracts.Enums;
+using Shared.Dtos.Validators;
 
-namespace personal_ai.Dtos.Reminder
+namespace Shared.Dtos.Reminder
 {
   public class CreateReminderRequestDto
   {
     [DefaultValue("My Reminder Title")]
     [Required(ErrorMessage = "The title is required.")]
     [MinLength(4, ErrorMessage = "The title must be at least 4 characters long.")]
-    [MaxLength(30, ErrorMessage = "The title must not excess 30 characters long.")]
+    [MaxLength(50, ErrorMessage = "The title must not excess 50 characters long.")]
     public required string Title { get; set; }
 
     [DefaultValue("This is a description of the reminder.")]
-    [MaxLength(100, ErrorMessage = "The title must not excess 100 characters long.")]
+    [MaxLength(200, ErrorMessage = "The title must not excess 200 characters long.")]
     public required string Description { get; set; }
 
     [CustomValidation(typeof(DueDateValidator), nameof(DueDateValidator.ValidateFutureDate))]

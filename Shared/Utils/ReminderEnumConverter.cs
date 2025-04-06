@@ -1,9 +1,9 @@
-namespace personal_ai.Utils;
+namespace Shared.Utils;
 
 using System;
-using personal_ai.Contracts.Enums;
-using personal_ai.Dtos.Reminder;
-using personal_ai.Models;
+using Shared.Contracts.Enums;
+using Shared.Dtos.Reminder;
+using Shared.Models;
 
 public static class ReminderEnumConverter
 {

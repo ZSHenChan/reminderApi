@@ -1,10 +1,10 @@
-namespace personal_ai.Contracts.Enums
+namespace Shared.Contracts.Enums
 {
-    public enum RepeatFrequencyType
-    {
-        None,
-        Daily,
-        Weekly,
-        Monthly,
-    }
+  public enum RepeatFrequencyType
+  {
+    None,
+    Daily,
+    Weekly,
+    Monthly,
+  }
 }
