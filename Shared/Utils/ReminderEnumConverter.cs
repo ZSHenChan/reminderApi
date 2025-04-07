@@ -49,9 +49,8 @@ public static class ReminderEnumConverter
       reminderSql.Description = reminderDto.Description;
       reminderSql.Status = reminderDto.Status;
       reminderSql.Priority = reminderDto.Priority;
-      reminderSql.RepeatFrequency = reminderDto.RepeatFrequency;
+      reminderSql.RecurringPattern = reminderDto.RecurringPattern;
       reminderSql.ReminderType = reminderDto.ReminderType;
-      reminderSql.IsRecurring = reminderDto.RepeatFrequency != RepeatFrequencyType.None;
     }
     catch (Exception)
     {

@@ -1,8 +1,7 @@
 namespace Shared.Contracts.Enums
 {
-  public enum RepeatFrequencyType
+  public enum RecurringType
   {
-    None,
     Daily,
     Weekly,
     Monthly,

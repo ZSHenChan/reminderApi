@@ -17,10 +17,9 @@ namespace reminderApi.Mappers
           DueTime = reminderModel.DueTime,
           Title = reminderModel.Title,
           Description = reminderModel.Description,
-          IsRecurring = reminderModel.IsRecurring,
           Status = reminderModel.Status,
           Priority = reminderModel.Priority,
-          RepeatFrequency = reminderModel.RepeatFrequency,
+          RecurringPattern = reminderModel.RecurringPattern,
           ReminderType = reminderModel.ReminderType,
         };
         return reminderDtoResult;
@@ -31,7 +30,10 @@ namespace reminderApi.Mappers
       }
     }
 
-    public static Reminder ToReminderModel(this CreateReminderRequestDto reminderDto)
+    public static Reminder ToReminderModel(
+      this CreateReminderRequestDto reminderDto,
+      string appUserId
+    )
     {
       try
       {
@@ -43,9 +45,9 @@ namespace reminderApi.Mappers
           Description = reminderDto.Description,
           Status = reminderDto.Status,
           Priority = reminderDto.Priority,
-          RepeatFrequency = reminderDto.RepeatFrequency,
+          RecurringPattern = reminderDto.RecurringPattern,
           ReminderType = reminderDto.ReminderType,
-          IsRecurring = reminderDto.RepeatFrequency != RepeatFrequencyType.None,
+          AppUserId = appUserId,
         };
         return reminderModelResult;
       }

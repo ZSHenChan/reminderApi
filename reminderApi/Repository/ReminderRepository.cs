@@ -16,110 +16,75 @@ namespace reminderApi.Repository
       _context = context;
     }
 
-    public async Task<List<Reminder>> GetAllAsync(QueryObject queryObject)
+    public async Task<List<Reminder>> GetAllAsync(QueryObject queryObject, string UserId)
     {
-      try
+      var reminders = _context.Reminders.AsQueryable();
+      reminders = reminders.Where(r => r.AppUserId == UserId);
+
+      if (!string.IsNullOrWhiteSpace(queryObject.Title))
       {
-        var reminders = _context.Reminders.AsQueryable();
-        if (!string.IsNullOrWhiteSpace(queryObject.Title))
-        {
-          reminders = reminders.Where(r => r.Title.Contains(queryObject.Title));
-        }
-
-        if (!string.IsNullOrWhiteSpace(queryObject.Description))
-        {
-          reminders = reminders.Where(r => r.Description.Contains(queryObject.Description));
-        }
-
-        if (queryObject.IsRecurring.HasValue)
-        {
-          reminders = reminders.Where(r => r.IsRecurring == queryObject.IsRecurring);
-        }
-
-        if (queryObject.RemiderType.HasValue)
-        {
-          reminders = reminders.Where(r => r.ReminderType == queryObject.RemiderType);
-        }
-
-        if (queryObject.ReminderStatus.HasValue)
-        {
-          reminders = reminders.Where(r => r.Status == queryObject.ReminderStatus);
-        }
-
-        reminders = reminders.OrderBy(r => r.DueDate).ThenBy(r => r.DueTime);
-
-        int skipNumber = (queryObject.PageNumber - 1) * queryObject.PageSize;
-        reminders = reminders.Skip(skipNumber).Take(queryObject.PageSize);
-
-        return await reminders.ToListAsync();
+        reminders = reminders.Where(r => r.Title.Contains(queryObject.Title));
       }
-      catch (Exception)
+
+      if (!string.IsNullOrWhiteSpace(queryObject.Description))
       {
-        throw;
+        reminders = reminders.Where(r => r.Description.Contains(queryObject.Description));
       }
+
+      if (queryObject.RemiderType.HasValue)
+      {
+        reminders = reminders.Where(r => r.ReminderType == queryObject.RemiderType);
+      }
+
+      if (queryObject.ReminderStatus.HasValue)
+      {
+        reminders = reminders.Where(r => r.Status == queryObject.ReminderStatus);
+      }
+
+      reminders = reminders.OrderBy(r => r.DueDate).ThenBy(r => r.DueTime);
+
+      int skipNumber = (queryObject.PageNumber - 1) * queryObject.PageSize;
+      reminders = reminders.Skip(skipNumber).Take(queryObject.PageSize);
+
+      return await reminders.ToListAsync();
     }
 
-    public async Task<Reminder?> GetByIdAsync(int id)
+    public async Task<Reminder?> GetByIdAsync(int id, string UserId)
     {
-      try
-      {
-        return await _context.Reminders.FindAsync(id);
-      }
-      catch (Exception)
-      {
-        throw;
-      }
+      return await _context.Reminders.FindAsync(id);
     }
 
     public async Task<Reminder> AddAsync(Reminder reminder)
     {
-      try
-      {
-        _context.Reminders.Add(reminder);
-        return await _context.SaveChangesAsync().ContinueWith(_ => reminder);
-      }
-      catch (Exception)
-      {
-        throw;
-      }
+      await _context.Reminders.AddAsync(reminder);
+      await _context.SaveChangesAsync();
+      return reminder;
     }
 
     public async Task<Reminder?> UpdateAsync(int id, CreateReminderRequestDto reminder)
     {
-      try
+      var existingReminder = await _context.Reminders.FindAsync(id);
+      if (existingReminder == null)
       {
-        var existingReminder = await _context.Reminders.FindAsync(id);
-        if (existingReminder == null)
-        {
-          return null;
-        }
-        ReminderEnumConverter.UpdateReminderSql(existingReminder, reminder);
-        _context.Reminders.Update(existingReminder);
-        return await _context.SaveChangesAsync().ContinueWith(_ => existingReminder);
+        return null;
       }
-      catch (Exception)
-      {
-        throw;
-      }
+      ReminderEnumConverter.UpdateReminderSql(existingReminder, reminder);
+      _context.Reminders.Update(existingReminder);
+      // return await _context.SaveChangesAsync().ContinueWith(_ => existingReminder);
+      await _context.SaveChangesAsync();
+      return existingReminder;
     }
 
     public async Task<Reminder?> DeleteAsync(int id)
     {
-      try
+      Reminder? existingReminder = await _context.Reminders.FindAsync(id);
+      if (existingReminder == null)
       {
-        Reminder? existingReminder = await _context.Reminders.FindAsync(id);
-        if (existingReminder == null)
-        {
-          return null;
-        }
-        _context.Reminders.Remove(existingReminder);
-        await _context.SaveChangesAsync();
-        return existingReminder;
+        return null;
       }
-      catch (Exception)
-      {
-        throw;
-      }
+      _context.Reminders.Remove(existingReminder);
+      await _context.SaveChangesAsync();
+      return existingReminder;
     }
   }
 }

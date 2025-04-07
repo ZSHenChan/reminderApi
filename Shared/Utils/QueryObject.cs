@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Shared.Contracts.Enums;
+using Shared.Models;
 
 namespace Shared.Utils
 {
@@ -7,7 +8,6 @@ namespace Shared.Utils
   {
     public string? Title { get; set; }
     public string? Description { get; set; }
-    public bool? IsRecurring { get; set; }
     public ReminderType? RemiderType { get; set; }
     public ReminderStatusType? ReminderStatus { get; set; }
 

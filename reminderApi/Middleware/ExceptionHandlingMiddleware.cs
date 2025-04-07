@@ -54,9 +54,10 @@ namespace reminderApi.Middleware
       catch (Exception ex)
       {
         _systemLogger.LogError(
-          "An unexpected error occurred. Type: {Type}, Message: {Exception}\n",
+          "An unexpected error occurred. Type: {Type}, Message: {Exception}\n{StackTrace}\n",
           ex.GetType().Name,
-          ex.Message
+          ex.Message,
+          ex.StackTrace
         );
         await WriteErrorResponseAsync(
           context,

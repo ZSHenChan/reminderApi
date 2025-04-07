@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using reminderApi.Data;
 
@@ -11,9 +12,11 @@ using reminderApi.Data;
 namespace reminderApi.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    partial class AppDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250406051206_UpdateController")]
+    partial class UpdateController
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,13 +54,13 @@ namespace reminderApi.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "5203af18-f6cd-4504-99f9-021f75d037eb",
+                            Id = "85a0c50a-c81b-4dfd-b69b-4eeebca4984a",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "76fc8589-2009-42c0-b82a-ad986ab7bf2f",
+                            Id = "926cb028-050d-4fd6-bca5-9e3d2f2000ce",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -234,28 +237,6 @@ namespace reminderApi.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Shared.Models.RecurringPattern", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateOnly?>("EndDate")
-                        .HasColumnType("date");
-
-                    b.Property<int>("Interval")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RecurringType")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("RecurringPattern");
-                });
-
             modelBuilder.Entity("Shared.Models.Reminder", b =>
                 {
                     b.Property<int>("Id")
@@ -264,27 +245,26 @@ namespace reminderApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AppUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateOnly?>("DueDate")
+                    b.Property<DateOnly>("DueDate")
                         .HasColumnType("date");
 
-                    b.Property<TimeOnly?>("DueTime")
+                    b.Property<TimeOnly>("DueTime")
                         .HasColumnType("time");
+
+                    b.Property<bool>("IsRecurring")
+                        .HasColumnType("bit");
 
                     b.Property<int>("Priority")
                         .HasColumnType("int");
 
-                    b.Property<int?>("RecurringPatternId")
+                    b.Property<int>("ReminderType")
                         .HasColumnType("int");
 
-                    b.Property<int>("ReminderType")
+                    b.Property<int>("RepeatFrequency")
                         .HasColumnType("int");
 
                     b.Property<int>("Status")
@@ -295,10 +275,6 @@ namespace reminderApi.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AppUserId");
-
-                    b.HasIndex("RecurringPatternId");
 
                     b.ToTable("Reminders");
                 });
@@ -352,33 +328,6 @@ namespace reminderApi.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Shared.Models.Reminder", b =>
-                {
-                    b.HasOne("Shared.Models.AppUser", "AppUser")
-                        .WithMany("Reminders")
-                        .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Shared.Models.RecurringPattern", "RecurringPattern")
-                        .WithMany("Reminders")
-                        .HasForeignKey("RecurringPatternId");
-
-                    b.Navigation("AppUser");
-
-                    b.Navigation("RecurringPattern");
-                });
-
-            modelBuilder.Entity("Shared.Models.AppUser", b =>
-                {
-                    b.Navigation("Reminders");
-                });
-
-            modelBuilder.Entity("Shared.Models.RecurringPattern", b =>
-                {
-                    b.Navigation("Reminders");
                 });
 #pragma warning restore 612, 618
         }

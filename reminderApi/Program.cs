@@ -9,6 +9,7 @@ using Microsoft.OpenApi.Models;
 using reminderApi.Data;
 using reminderApi.Middleware;
 using reminderApi.Repository;
+using reminderApi.Service;
 using Serilog;
 using Serilog.Events;
 using Shared.Contracts.Interfaces;
@@ -67,6 +68,30 @@ try
       }
     );
     options.UseInlineDefinitionsForEnums();
+    options.AddSecurityDefinition(
+      "Bearer",
+      new OpenApiSecurityScheme
+      {
+        In = ParameterLocation.Header,
+        Description = "Please enter a valid token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "Bearer",
+      }
+    );
+    options.AddSecurityRequirement(
+      new OpenApiSecurityRequirement
+      {
+        {
+          new OpenApiSecurityScheme
+          {
+            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" },
+          },
+          new string[] { }
+        },
+      }
+    );
   });
   Log.Information($"Swagger available at: http://localhost:5241/swagger/index.html");
 
@@ -113,6 +138,7 @@ try
     });
 
   builder.Services.AddScoped<IReminderRepository, ReminderRepository>();
+  builder.Services.AddScoped<ITokenService, TokenService>();
 
   builder.Logging.ClearProviders();
   builder.Host.UseSerilog(
