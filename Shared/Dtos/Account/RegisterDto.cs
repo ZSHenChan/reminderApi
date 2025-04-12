@@ -5,30 +5,34 @@ namespace Shared.Dtos.Account
 {
   public class RegisterDto
   {
-    [Required(ErrorMessage = "Email is required.")]
+    [Required(ErrorMessage = "{0} is required.")]
     [DefaultValue("reminderMaster@reminder.com")]
-    [EmailAddress(ErrorMessage = "Invalid email address.")]
+    [EmailAddress(ErrorMessage = "Invalid {0}.")]
     public string? Email { get; set; }
 
-    [Required(ErrorMessage = "UserName is required.")]
+    [Required(ErrorMessage = "{0} is required.")]
     [DefaultValue("reminderMaster")]
-    [MinLength(6, ErrorMessage = "UserName must be at least {2} characters long.")]
+    [StringLength(
+      20,
+      MinimumLength = 5,
+      ErrorMessage = "{0} must be between {2} and {1} characters long."
+    )]
     public string? UserName { get; set; }
 
-    [Required(ErrorMessage = "Password is required.")]
+    [Required(ErrorMessage = "{0} is required.")]
     [DefaultValue("Password123!")]
     [DataType(DataType.Password)]
     [StringLength(
       100,
-      ErrorMessage = "Password must be at least {2} characters long.",
-      MinimumLength = 10
+      MinimumLength = 10,
+      ErrorMessage = "{0} must be at least {2} characters long."
     )]
     public string? Password { get; set; }
 
-    [Required(ErrorMessage = "Confirm Password is required.")]
+    [Required(ErrorMessage = "{0} is required.")]
     [DefaultValue("Password123!")]
     [DataType(DataType.Password)]
-    [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+    [Compare("Password", ErrorMessage = "{0} does not match.")]
     public string? ConfirmPassword { get; set; }
   }
 }

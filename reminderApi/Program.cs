@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using reminderApi.Data;
+using reminderApi.Filters;
 using reminderApi.Middleware;
 using reminderApi.Repository;
 using reminderApi.Service;
@@ -171,6 +172,14 @@ try
     app.UseSwagger();
     app.UseSwaggerUI();
   }
+
+  app.UseCors(options =>
+    options
+      .WithOrigins("http://localhost:5173")
+      .AllowAnyMethod()
+      .AllowAnyHeader()
+      .AllowCredentials()
+  );
 
   app.UseHttpsRedirection();
 

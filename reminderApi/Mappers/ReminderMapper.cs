@@ -8,26 +8,19 @@ namespace reminderApi.Mappers
   {
     public static ReminderDto ToReminderDto(this Reminder reminderModel)
     {
-      try
+      ReminderDto reminderDtoResult = new()
       {
-        ReminderDto reminderDtoResult = new()
-        {
-          Id = reminderModel.Id,
-          DueDate = reminderModel.DueDate,
-          DueTime = reminderModel.DueTime,
-          Title = reminderModel.Title,
-          Description = reminderModel.Description,
-          Status = reminderModel.Status,
-          Priority = reminderModel.Priority,
-          RecurringPattern = reminderModel.RecurringPattern,
-          ReminderType = reminderModel.ReminderType,
-        };
-        return reminderDtoResult;
-      }
-      catch (Exception)
-      {
-        throw;
-      }
+        Id = reminderModel.Id,
+        DueDate = reminderModel.DueDate,
+        DueTime = reminderModel.DueTime,
+        Title = reminderModel.Title,
+        Description = reminderModel.Description,
+        Status = reminderModel.Status,
+        Priority = reminderModel.Priority,
+        RecurringPattern = reminderModel.RecurringPattern,
+        ReminderType = reminderModel.ReminderType,
+      };
+      return reminderDtoResult;
     }
 
     public static Reminder ToReminderModel(
@@ -35,26 +28,19 @@ namespace reminderApi.Mappers
       string appUserId
     )
     {
-      try
+      Reminder reminderModelResult = new()
       {
-        Reminder reminderModelResult = new()
-        {
-          DueDate = reminderDto.DueDate,
-          DueTime = reminderDto.DueTime,
-          Title = reminderDto.Title,
-          Description = reminderDto.Description,
-          Status = reminderDto.Status,
-          Priority = reminderDto.Priority,
-          RecurringPattern = reminderDto.RecurringPattern,
-          ReminderType = reminderDto.ReminderType,
-          AppUserId = appUserId,
-        };
-        return reminderModelResult;
-      }
-      catch (Exception)
-      {
-        throw;
-      }
+        DueDate = reminderDto.DueDate ?? null,
+        DueTime = reminderDto.DueTime ?? null,
+        Title = reminderDto.Title,
+        Description = reminderDto.Description,
+        Status = reminderDto.Status,
+        Priority = reminderDto.Priority,
+        RecurringPattern = reminderDto.RecurringPattern,
+        ReminderType = reminderDto.ReminderType,
+        AppUserId = appUserId,
+      };
+      return reminderModelResult;
     }
   }
 }

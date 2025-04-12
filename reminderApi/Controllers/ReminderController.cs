@@ -81,7 +81,6 @@ public class ReminderController : ControllerBase
   /// Create new reminder.
   /// </summary>
   /// <returns></returns>
-
   [HttpPost("add", Name = "CreateNewReminder")]
   [Authorize]
   public async Task<IActionResult> PostReminder([FromBody] CreateReminderRequestDto reminderDto)
