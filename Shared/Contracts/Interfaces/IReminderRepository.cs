@@ -6,7 +6,7 @@ namespace Shared.Contracts.Interfaces
 {
   public interface IReminderRepository
   {
-    Task<Reminder> AddAsync(Reminder reminder);
+    Task<Reminder[]> AddAsync(Reminder[] reminder);
     Task<List<Reminder>> GetAllAsync(QueryObject queryObject, string UserId);
     Task<Reminder?> GetByIdAsync(int id, string UserId);
     Task<Reminder?> UpdateAsync(int id, CreateReminderRequestDto reminder);

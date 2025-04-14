@@ -54,11 +54,14 @@ namespace reminderApi.Repository
       return await _context.Reminders.FindAsync(id);
     }
 
-    public async Task<Reminder> AddAsync(Reminder reminder)
+    public async Task<Reminder[]> AddAsync(Reminder[] reminders)
     {
-      await _context.Reminders.AddAsync(reminder);
+      foreach (Reminder reminder in reminders)
+      {
+        await _context.Reminders.AddAsync(reminder);
+      }
       await _context.SaveChangesAsync();
-      return reminder;
+      return [];
     }
 
     public async Task<Reminder?> UpdateAsync(int id, CreateReminderRequestDto reminder)

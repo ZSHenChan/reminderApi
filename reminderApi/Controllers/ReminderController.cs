@@ -1,4 +1,3 @@
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -83,25 +82,25 @@ public class ReminderController : ControllerBase
   /// <returns></returns>
   [HttpPost("add", Name = "CreateNewReminder")]
   [Authorize]
-  public async Task<IActionResult> PostReminder([FromBody] CreateReminderRequestDto reminderDto)
+  public async Task<IActionResult> CreateReminder(
+    [FromBody] CreateReminderRequestDto[] reminderDtoList
+  )
   {
     if (!ModelState.IsValid)
       return BadRequest(ModelState);
 
     string UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
-    _systemLogger.LogInformation($"User Add Reminder: {UserId}");
     if (string.IsNullOrEmpty(UserId))
     {
       return Unauthorized("User not found.");
     }
 
-    Reminder reminder = ReminderMapper.ToReminderModel(reminderDto, UserId);
-    Reminder reminderSql = await _reminderRepository.AddAsync(reminder);
-    return CreatedAtRoute(
-      "GetReminder",
-      new { id = reminderSql.Id },
-      ReminderMapper.ToReminderDto(reminderSql)
-    );
+    Reminder[] reminderList =
+    [
+      .. reminderDtoList.Select(reminderDto => ReminderMapper.ToReminderModel(reminderDto, UserId)),
+    ];
+    Reminder[] failedReminders = await _reminderRepository.AddAsync(reminderList);
+    return Ok(failedReminders);
   }
 
   [HttpPut("update/{id:int}", Name = "UpdateReminder")]
