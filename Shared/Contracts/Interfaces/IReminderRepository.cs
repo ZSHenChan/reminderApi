@@ -10,6 +10,6 @@ namespace Shared.Contracts.Interfaces
     Task<List<Reminder>> GetAllAsync(QueryObject queryObject, string UserId);
     Task<Reminder?> GetByIdAsync(int id, string UserId);
     Task<Reminder?> UpdateAsync(int id, CreateReminderRequestDto reminder);
-    Task<Reminder?> DeleteAsync(int id);
+    Task<Reminder?> DeleteAsync(int id,string userId);
   }
 }

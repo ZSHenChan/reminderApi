@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.FeatureManagement;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using reminderApi.Data;
@@ -138,6 +139,10 @@ try
       };
     });
 
+  builder.Services.AddFeatureManagement();
+
+  builder.Services.AddSingleton<IRedisContext, RedisContext>();
+
   builder.Services.AddScoped<IReminderRepository, ReminderRepository>();
   builder.Services.AddScoped<ITokenService, TokenService>();
 
@@ -175,7 +180,7 @@ try
 
   app.UseCors(options =>
     options
-      .WithOrigins("http://localhost:5173")
+      .WithOrigins("http://localhost:5173", "http://localhost:3000")
       .AllowAnyMethod()
       .AllowAnyHeader()
       .AllowCredentials()

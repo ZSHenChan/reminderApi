@@ -15,7 +15,7 @@ namespace Shared.Dtos.Reminder
     public required string Title { get; set; }
 
     [DefaultValue("Describe your reminder")]
-    [MaxLength(10, ErrorMessage = "{0} must not exceed {1} characters long.")]
+    [MaxLength(100, ErrorMessage = "{0} must not exceed {1} characters long.")]
     public string Description { get; set; }
 
     [CustomValidation(typeof(DueDateValidator), nameof(DueDateValidator.ValidateFutureDate))]

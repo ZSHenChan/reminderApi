@@ -1,6 +1,8 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.FeatureManagement;
+using reminderApi.Data;
 using reminderApi.Mappers;
 using Shared.Contracts.Interfaces;
 using Shared.Dtos.Reminder;
@@ -18,14 +20,20 @@ public class ReminderController : ControllerBase
 {
   private readonly ILogger<ReminderController> _systemLogger;
   private readonly IReminderRepository _reminderRepository;
+  private readonly IRedisContext _redisContext;
+  private readonly IVariantFeatureManager _featureManager;
 
   public ReminderController(
     ILogger<ReminderController> logger,
-    IReminderRepository reminderRepository
+    IReminderRepository reminderRepository,
+    IRedisContext redisContext,
+    IVariantFeatureManager featureManager
   )
   {
     _systemLogger = logger;
     _reminderRepository = reminderRepository;
+    _redisContext = redisContext;
+    _featureManager = featureManager;
   }
 
   /// <summary>
@@ -71,7 +79,20 @@ public class ReminderController : ControllerBase
       return Unauthorized("User not found.");
     }
 
-    List<Reminder> reminders = await _reminderRepository.GetAllAsync(queryObject, UserId);
+    List<Reminder> reminders = [];
+    if (await _featureManager.IsEnabledAsync("FeatureRedis"))
+    {
+      reminders = _redisContext.GetAllReminders(UserId);
+      if (reminders.Count != 0)
+      {
+        return Ok(reminders.Select(r => ReminderMapper.ToReminderDto(r)));
+      }
+      Console.WriteLine("No reminders found in Redis, fetching from SQL Server.");
+    }
+
+    reminders = await _reminderRepository.GetAllAsync(queryObject, UserId);
+    if (await _featureManager.IsEnabledAsync("FeatureRedis"))
+      _redisContext.StoreReminders(reminders, UserId);
     var reminderDtoList = reminders.Select(r => ReminderMapper.ToReminderDto(r));
     return Ok(reminderDtoList);
   }
@@ -99,6 +120,8 @@ public class ReminderController : ControllerBase
     [
       .. reminderDtoList.Select(reminderDto => ReminderMapper.ToReminderModel(reminderDto, UserId)),
     ];
+    if (await _featureManager.IsEnabledAsync("FeatureRedis"))
+      _redisContext.StoreReminders([.. reminderList], UserId);
     Reminder[] failedReminders = await _reminderRepository.AddAsync(reminderList);
     return Ok(failedReminders);
   }
@@ -128,7 +151,15 @@ public class ReminderController : ControllerBase
     if (!ModelState.IsValid)
       return BadRequest(ModelState);
 
-    Reminder? reminder = await _reminderRepository.DeleteAsync(id);
+    string UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+    if (string.IsNullOrEmpty(UserId))
+    {
+      return Unauthorized("User not found.");
+    }
+
+    if (await _featureManager.IsEnabledAsync("FeatureRedis"))
+      _redisContext.DeleteReminders([id], UserId);
+    Reminder? reminder = await _reminderRepository.DeleteAsync(id, UserId);
     if (reminder == null)
     {
       return NotFound($"Reminder with ID {id} not found.");

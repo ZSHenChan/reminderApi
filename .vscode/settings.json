@@ -1,3 +1,5 @@
 {
-  "editor.tabSize": 2
+  "editor.tabSize": 2,
+  "appService.defaultWebAppToDeploy": "/subscriptions/0425027d-5200-43eb-a7a3-c255a9f3784a/resourceGroups/portfolio-web/providers/Microsoft.Web/sites/reminder-api",
+  "appService.deploySubpath": "."
 }

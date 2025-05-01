@@ -31,12 +31,12 @@ namespace reminderApi.Service
         new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
       };
 
-      var cred = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
+      var cred = new SigningCredentials(_key, SecurityAlgorithms.HmacSha256);
 
       var tokenDescriptor = new SecurityTokenDescriptor
       {
         Subject = new ClaimsIdentity(claims),
-        Expires = DateTime.Now.AddDays(1),
+        Expires = DateTime.Now.AddDays(30),
         SigningCredentials = cred,
         Issuer = _config["Jwt:Issuer"],
         Audience = _config["Jwt:Audience"],

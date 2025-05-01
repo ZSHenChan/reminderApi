@@ -78,10 +78,10 @@ namespace reminderApi.Repository
       return existingReminder;
     }
 
-    public async Task<Reminder?> DeleteAsync(int id)
+    public async Task<Reminder?> DeleteAsync(int id,string userId)
     {
       Reminder? existingReminder = await _context.Reminders.FindAsync(id);
-      if (existingReminder == null)
+      if (existingReminder == null || existingReminder.AppUserId != userId)
       {
         return null;
       }
