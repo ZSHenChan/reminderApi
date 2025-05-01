@@ -9,6 +9,7 @@ The Reminder API is a .NET Core 8-based application designed to manage reminders
 - **Redis Caching**: Improves performance by caching frequently accessed data.
 - **JWT Authentication**: Issues and validates JSON Web Tokens for secure API access.
 - **Data Validation**: Middleware and filters ensure robust handling of malformed or invalid data.
+- **FeatureManagement**: Enabling Feature Flag to for streamlined and Beta testing.
 
 ## Technologies Used
 
@@ -35,13 +36,20 @@ cd reminderApi-sln/reminderApi
 
 ### 2. Configure the Environment
 
-Create a `.env` file in the root directory and add the following environment variables:
+In appsettings.Development.json:
 
 ```env
-POSTGRES_CONNECTION_STRING=Host=<host>;Database=<database>;Username=<username>;Password=<password>
-REDIS_CONNECTION_STRING=<redis-connection-string>
-JWT_SECRET=<your-jwt-secret>
+  "ConnectionStrings": {
+    "SQLServer": "Data Source=localhost;Initial Catalog=reminders;User Id=YOUR_ID;Password=YOUR_PASSWORD;Integrated Security=True;TrustServerCertificate=true;Trusted_Connection=false"
+  },
+"Jwt": {
+    "Issuer": "http://localhost:5000/",
+    "Audience": "http://localhost:5000/",
+    "SigninKey": "YOUR_SECRET_SIGNIN_KEY"
+  },
 ```
+
+Update YOUR_ID and YOUR_PASSWORD to interact with local host database
 
 ### 3. Apply Database Migrations
 
@@ -59,15 +67,16 @@ Start the application using the .NET CLI:
 dotnet run
 ```
 
-The API will be available at `http://localhost:5000`.
+The API will be available at `http://localhost:5241`.
+Swagger url: `http://localhost:5241/swagger/index.html`
 
 ## API Endpoints
 
-- **POST /api/reminders**: Create a new reminder.
-- **GET /api/reminders**: Retrieve all reminders.
-- **GET /api/reminders/{id}**: Retrieve a specific reminder by ID.
-- **PUT /api/reminders/{id}**: Update a specific reminder.
-- **DELETE /api/reminders/{id}**: Delete a specific reminder.
+- **POST /api/reminder/add**: Create a new reminder.
+- **GET /api/reminder/all**: Retrieve all reminders.
+- **GET /api/reminder/{id}**: Retrieve a specific reminder by ID.
+- **PUT /api/reminder/update/{id}**: Update a specific reminder.
+- **DELETE /api/reminder/delete/{id}**: Delete a specific reminder.
 
 ## Error Handling
 
@@ -75,10 +84,7 @@ The application uses middleware and filters to handle:
 
 - **Malformed Data**: Ensures the request body matches the expected structure.
 - **Invalid Data**: Validates the data against business rules.
-
-## Contributing
-
-Contributions are welcome! Please fork the repository and submit a pull request.
+- **Exceptions**: Handle exceptions globally
 
 ## License
 
