@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Shared.Reponses;
 
-namespace reminderApi.Filters;
+namespace reminderApi.Application.Filters;
 
 public class ModelStateActionFilter : IActionFilter
 {

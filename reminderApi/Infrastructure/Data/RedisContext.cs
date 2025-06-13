@@ -11,7 +11,7 @@ using Shared.Contracts.Interfaces;
 using Shared.Models;
 using StackExchange.Redis;
 
-namespace reminderApi.Data;
+namespace reminderApi.Infrastructure.Data;
 
 public class RedisContext : IRedisContext
 {

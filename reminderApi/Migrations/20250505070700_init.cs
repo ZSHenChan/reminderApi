@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace reminderApi.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -53,24 +53,18 @@ namespace reminderApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Reminders",
+                name: "RecurringPattern",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    DueDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    DueTime = table.Column<TimeOnly>(type: "time", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsRecurring = table.Column<bool>(type: "bit", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    Priority = table.Column<int>(type: "int", nullable: false),
-                    RepeatFrequency = table.Column<int>(type: "int", nullable: false),
-                    ReminderType = table.Column<int>(type: "int", nullable: false)
+                    RecurringType = table.Column<int>(type: "int", nullable: false),
+                    Interval = table.Column<int>(type: "int", nullable: false),
+                    EndDate = table.Column<DateOnly>(type: "date", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Reminders", x => x.Id);
+                    table.PrimaryKey("PK_RecurringPattern", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -179,13 +173,45 @@ namespace reminderApi.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Reminders",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DueDate = table.Column<DateOnly>(type: "date", nullable: true),
+                    DueTime = table.Column<TimeOnly>(type: "time", nullable: true),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    Priority = table.Column<int>(type: "int", nullable: false),
+                    ReminderType = table.Column<int>(type: "int", nullable: false),
+                    RecurringPatternId = table.Column<int>(type: "int", nullable: true),
+                    AppUserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reminders", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Reminders_AspNetUsers_AppUserId",
+                        column: x => x.AppUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Reminders_RecurringPattern_RecurringPatternId",
+                        column: x => x.RecurringPatternId,
+                        principalTable: "RecurringPattern",
+                        principalColumn: "Id");
+                });
+
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "88cf17e7-6844-4d56-9e53-1ac3e0dbbc8b", null, "User", "USER" },
-                    { "f574934c-cd63-4897-94b4-7c3ede09ea84", null, "Admin", "ADMIN" }
+                    { "f89da0a0-fb05-42de-9f90-b25849fbbfcd", null, "Admin", "ADMIN" },
+                    { "ff9ee5d0-aa7d-48b5-981d-ef6a7a60e9d8", null, "User", "USER" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -226,6 +252,16 @@ namespace reminderApi.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reminders_AppUserId",
+                table: "Reminders",
+                column: "AppUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reminders_RecurringPatternId",
+                table: "Reminders",
+                column: "RecurringPatternId");
         }
 
         /// <inheritdoc />
@@ -254,6 +290,9 @@ namespace reminderApi.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "RecurringPattern");
         }
     }
 }

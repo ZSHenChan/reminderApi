@@ -5,7 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Shared.Contracts.Interfaces;
 using Shared.Models;
 
-namespace reminderApi.Service
+namespace reminderApi.Application.Services
 {
   public class TokenService : ITokenService
   {
@@ -33,10 +33,11 @@ namespace reminderApi.Service
 
       var cred = new SigningCredentials(_key, SecurityAlgorithms.HmacSha256);
 
+      // int num_valid_days =
       var tokenDescriptor = new SecurityTokenDescriptor
       {
         Subject = new ClaimsIdentity(claims),
-        Expires = DateTime.Now.AddDays(30),
+        Expires = DateTime.Now.AddDays(365),
         SigningCredentials = cred,
         Issuer = _config["Jwt:Issuer"],
         Audience = _config["Jwt:Audience"],

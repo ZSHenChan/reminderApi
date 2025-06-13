@@ -4,14 +4,15 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.FeatureManagement;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using reminderApi.Data;
-using reminderApi.Filters;
-using reminderApi.Middleware;
-using reminderApi.Repository;
-using reminderApi.Service;
+using reminderApi.Application.Filters;
+using reminderApi.Application.Services;
+using reminderApi.Infrastructure.Data;
+using reminderApi.Infrastructure.Data.Repository;
+using reminderApi.Infrastructure.Middleware;
 using Serilog;
 using Serilog.Events;
 using Shared.Contracts.Interfaces;
@@ -26,6 +27,16 @@ Log.Logger = new LoggerConfiguration()
 try
 {
   var builder = WebApplication.CreateBuilder(args);
+  var conStr = builder.Configuration.GetConnectionString("SQLServer");
+
+  builder
+    .Services.AddHealthChecks()
+    .AddDbContextCheck<AppDBContext>(
+      name: "Reminder_Postgres_Db",
+      failureStatus: HealthStatus.Unhealthy,
+      tags: new[] { "database", "sql" }
+    );
+  ;
 
   // Add services to the container.
 
@@ -46,7 +57,6 @@ try
     });
   ;
 
-  builder.Services.AddEndpointsApiExplorer();
   builder.Services.AddSwaggerGen(options =>
   {
     options.SwaggerDoc(
@@ -95,11 +105,8 @@ try
       }
     );
   });
-  Log.Information($"Swagger available at: http://localhost:5241/swagger/index.html");
 
-  builder.Services.AddDbContext<AppDBContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SQLServer"))
-  );
+  builder.Services.AddDbContext<AppDBContext>(options => options.UseSqlServer(conStr));
 
   builder
     .Services.AddIdentity<AppUser, IdentityRole>(options =>
@@ -141,6 +148,8 @@ try
 
   builder.Services.AddFeatureManagement();
 
+  // builder.Services.AddSingleton<IGeoIpService, GeoIpService>();
+
   builder.Services.AddSingleton<IRedisContext, RedisContext>();
 
   builder.Services.AddScoped<IReminderRepository, ReminderRepository>();
@@ -164,6 +173,23 @@ try
         .Enrich.FromLogContext()
   );
 
+  string[] ALLOWED_CORS_ORIGINS = ["http://localhost:5173", "http://localhost:3000"];
+
+  builder.Services.AddCors(options =>
+  {
+    options.AddPolicy(
+      "DefaultCorsPolicy",
+      builder =>
+      {
+        builder
+          .WithOrigins(ALLOWED_CORS_ORIGINS)
+          .AllowAnyMethod()
+          .AllowAnyHeader()
+          .AllowCredentials();
+      }
+    );
+  });
+
   WebApplication app = builder.Build();
 
   // Global exception handling
@@ -176,22 +202,21 @@ try
   {
     app.UseSwagger();
     app.UseSwaggerUI();
+    Log.Information($"Swagger available at: http://localhost:5241/swagger/index.html");
   }
 
-  app.UseCors(options =>
-    options
-      .WithOrigins("http://localhost:5173", "http://localhost:3000")
-      .AllowAnyMethod()
-      .AllowAnyHeader()
-      .AllowCredentials()
-  );
-
-  app.UseHttpsRedirection();
+  app.UseCors("DefaultCorsPolicy");
 
   app.UseAuthentication();
   app.UseAuthorization();
 
+  app.UseMiddleware<RequestContextLoggingMiddleware>();
+
+  app.UseHttpsRedirection();
   app.MapControllers();
+  app.MapHealthChecks("/health");
+
+  // app.UseSerilogRequestLogging();
 
   try
   {

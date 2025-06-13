@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
-namespace reminderApi.Middleware
+namespace reminderApi.Infrastructure.Middleware
 {
   public class ExceptionHandlingMiddleware
   {

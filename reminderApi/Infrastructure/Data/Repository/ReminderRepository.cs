@@ -1,11 +1,10 @@
 using Microsoft.EntityFrameworkCore;
-using reminderApi.Data;
 using Shared.Contracts.Interfaces;
 using Shared.Dtos.Reminder;
 using Shared.Models;
 using Shared.Utils;
 
-namespace reminderApi.Repository
+namespace reminderApi.Infrastructure.Data.Repository
 {
   public class ReminderRepository : IReminderRepository
   {
@@ -78,7 +77,7 @@ namespace reminderApi.Repository
       return existingReminder;
     }
 
-    public async Task<Reminder?> DeleteAsync(int id,string userId)
+    public async Task<Reminder?> DeleteAsync(int id, string userId)
     {
       Reminder? existingReminder = await _context.Reminders.FindAsync(id);
       if (existingReminder == null || existingReminder.AppUserId != userId)

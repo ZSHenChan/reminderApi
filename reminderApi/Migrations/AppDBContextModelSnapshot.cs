@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using reminderApi.Data;
+using reminderApi.Infrastructure.Data;
 
 #nullable disable
 
@@ -51,13 +51,13 @@ namespace reminderApi.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "5203af18-f6cd-4504-99f9-021f75d037eb",
+                            Id = "f89da0a0-fb05-42de-9f90-b25849fbbfcd",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "76fc8589-2009-42c0-b82a-ad986ab7bf2f",
+                            Id = "ff9ee5d0-aa7d-48b5-981d-ef6a7a60e9d8",
                             Name = "User",
                             NormalizedName = "USER"
                         });

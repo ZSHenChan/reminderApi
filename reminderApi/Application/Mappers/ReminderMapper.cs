@@ -2,7 +2,7 @@ using Shared.Contracts.Enums;
 using Shared.Dtos.Reminder;
 using Shared.Models;
 
-namespace reminderApi.Mappers
+namespace reminderApi.Application.Mappers
 {
   public static class ReminderMapper
   {

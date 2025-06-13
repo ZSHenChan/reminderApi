@@ -2,7 +2,7 @@ using System.Net;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
-namespace reminderApi.Middleware
+namespace reminderApi.Infrastructure.Middleware
 {
   public class JsonExceptionHandlingMiddleware
   {
