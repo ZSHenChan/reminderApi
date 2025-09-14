@@ -6,10 +6,10 @@ namespace Shared.Dtos.Account
   {
     [Required(ErrorMessage = "{0} is required.")]
     [EmailAddress(ErrorMessage = "Invalid email address.")]
-    public string? Email { get; set; }
+    public required string Email { get; set; }
 
     [Required(ErrorMessage = "{0} is required.")]
     [DataType(DataType.Password)]
-    public string? Password { get; set; }
+    public required string Password { get; set; }
   }
 }

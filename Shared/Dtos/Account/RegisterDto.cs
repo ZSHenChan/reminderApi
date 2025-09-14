@@ -8,7 +8,7 @@ namespace Shared.Dtos.Account
     [Required(ErrorMessage = "{0} is required.")]
     [DefaultValue("reminderMaster@reminder.com")]
     [EmailAddress(ErrorMessage = "Invalid {0}.")]
-    public string? Email { get; set; }
+    public required string Email { get; set; }
 
     [Required(ErrorMessage = "{0} is required.")]
     [DefaultValue("reminderMaster")]
@@ -17,7 +17,7 @@ namespace Shared.Dtos.Account
       MinimumLength = 5,
       ErrorMessage = "{0} must be between {2} and {1} characters long."
     )]
-    public string? UserName { get; set; }
+    public required string UserName { get; set; }
 
     [Required(ErrorMessage = "{0} is required.")]
     [DefaultValue("Password123!")]
@@ -27,12 +27,12 @@ namespace Shared.Dtos.Account
       MinimumLength = 10,
       ErrorMessage = "{0} must be at least {2} characters long."
     )]
-    public string? Password { get; set; }
+    public required string Password { get; set; }
 
     [Required(ErrorMessage = "{0} is required.")]
     [DefaultValue("Password123!")]
     [DataType(DataType.Password)]
     [Compare("Password", ErrorMessage = "{0} does not match.")]
-    public string? ConfirmPassword { get; set; }
+    public required string ConfirmPassword { get; set; }
   }
 }
